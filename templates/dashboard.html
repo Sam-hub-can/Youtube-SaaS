@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SaaS Dashboard</title>
+</head>
+<body>
+
+<h2>YouTube AI SaaS Dashboard</h2>
+
+{% for r in rows %}
+<div style="border:1px solid #ccc; padding:10px; margin:10px;">
+<p><b>Comment:</b> {{r[3]}}</p>
+<p><b>Reply:</b> {{r[4]}}</p>
+
+<a href="/approve/{{r[0]}}">Approve</a>
+</div>
+{% endfor %}
+
+</body>
+</html>
