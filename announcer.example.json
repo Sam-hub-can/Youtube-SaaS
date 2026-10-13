@@ -1,0 +1,12 @@
+{
+  "title": "Database upgrade",
+  "start": "2026-10-20T02:00:00+00:00",
+  "end": "2026-10-20T04:00:00+00:00",
+  "reason": "Upgrading PostgreSQL.",
+  "targets": ["web dashboard", "reply worker", "api"],
+  "channels": [
+    {"type": "slack", "url_env": "ANNOUNCER_SLACK_WEBHOOK"},
+    {"type": "discord", "url_env": "ANNOUNCER_DISCORD_WEBHOOK"},
+    {"type": "console"}
+  ]
+}
