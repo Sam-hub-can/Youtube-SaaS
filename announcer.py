@@ -11,6 +11,8 @@ plan.json example (see announcer.example.json):
   "start": "2026-10-20T02:00:00+00:00",
   "end":   "2026-10-20T04:00:00+00:00",
   "reason": "Upgrading PostgreSQL.",
+  "message": "optional: overrides the generated text for every stage",
+  "expires": "optional: stop announcing/showing after this time",
   "targets": ["web dashboard", "reply worker", "api"],
   "channels": [
     {"type": "slack",   "url_env": "ANNOUNCER_SLACK_WEBHOOK"},
@@ -52,6 +54,7 @@ def load_plan(path):
         if not plan.get(key):
             raise ValueError(f"plan is missing {key!r}")
     plan["_start"], plan["_end"] = parse_time(plan["start"]), parse_time(plan["end"])
+    plan["_expires"] = parse_time(plan["expires"]) if plan.get("expires") else None
     if plan["_end"] <= plan["_start"]:
         raise ValueError("end must be after start")
     return plan
@@ -72,7 +75,26 @@ def due_stage(plan, now=None):
     return due
 
 
+def is_active(plan, now=None):
+    """False once the plan's optional `expires` time has passed."""
+    now = now or datetime.now(timezone.utc)
+    return plan["_expires"] is None or now < plan["_expires"]
+
+
+def active_notice(path="announcement.json", now=None):
+    """Banner text for apps/servers to show, or None (missing, not started, expired)."""
+    try:
+        plan = load_plan(path)
+    except (OSError, ValueError, KeyError):
+        return None
+    if not is_active(plan, now) or not plan.get("message"):
+        return None
+    return plan["message"]
+
+
 def build_message(plan, stage):
+    if plan.get("message"):
+        return plan["message"]
     start, end = plan["_start"], plan["_end"]
     minutes = int((end - start).total_seconds() // 60)
     targets = ", ".join(plan["targets"])
@@ -143,6 +165,9 @@ def main(argv=None):
     p.add_argument("--stage", choices=list(STAGES), help="force a stage instead of auto")
     a = p.parse_args(argv)
     plan = load_plan(a.plan)
+    if not is_active(plan):
+        print("Announcement expired; nothing to send.")
+        return 0
     stage = a.stage or due_stage(plan)
     if stage is None:
         print("Nothing due yet.")

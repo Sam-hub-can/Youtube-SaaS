@@ -5,6 +5,12 @@
 </head>
 <body>
 
+{% if notice %}
+<div style="background:#fff3cd; border:1px solid #ffc107; padding:10px; margin:10px;">
+⚠️ {{ notice }}
+</div>
+{% endif %}
+
 <h2>YouTube AI SaaS Dashboard</h2>
 
 {% for r in rows %}

@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from db import init_db, insert_reply
 from bot import generate, score, strategy, get_transcript
+from announcer import active_notice
 
 load_dotenv()
 
@@ -54,6 +55,10 @@ def get_comments(video_id):
 # RUN
 # ----------------------------
 def run():
+
+    notice = active_notice()
+    if notice:
+        print("NOTICE:", notice)
 
     init_db()
 
