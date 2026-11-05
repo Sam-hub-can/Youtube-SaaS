@@ -59,3 +59,7 @@ End every run with a short report:
 - **Changed**: what you changed, and why.
 - **Needs your approval**: budget and bid proposals with current value, proposed value, and expected impact.
 - **Watching**: issues to recheck next run.
+
+## Jarvis
+
+After each weekly review, send the summary with `python -m googleads.summary` (use `--dry-run` first). If `JARVIS_WEBHOOK_URL` is not set or the send fails, say so in the report and continue; do not retry in a loop.

@@ -38,6 +38,8 @@ The API is free. You pay only for ad spend.
 | `python -m googleads.actions apply-recommendation --resource-name RN` | Apply a recommendation. Only no-spend types run without approval | agent / you |
 | `python -m googleads.actions set-budget --budget-id ID --amount 25` | Change a daily budget | **you only** |
 
+| `python -m googleads.summary [--dry-run]` | Build the weekly summary and POST it to the Jarvis webhook (chattervane > app data panel). `--dry-run` prints the payload only | agent |
+
 Every command accepts `--dry-run`. Changes are logged to `.claude/google-ads/changes.jsonl`.
 
 ## Budget approval
@@ -45,3 +47,10 @@ Every command accepts `--dry-run`. Changes are logged to `.claude/google-ads/cha
 `set-budget` (and any recommendation that could change spend, bids or targeting) stops and asks you to type
 `APPROVE` in a real terminal. It reads from `/dev/tty`, so the agent cannot answer for you. The agent will
 tell you the exact command to run. There is no command for bids or bid strategies, so the agent cannot change them.
+
+## Jarvis webhook
+
+Set `JARVIS_WEBHOOK_URL` in `.env.googleads` (and `JARVIS_WEBHOOK_SECRET` if Jarvis verifies signatures).
+`python -m googleads.summary` sends JSON with `app: "chattervane"`, `panel: "app-data"`, totals, top campaigns,
+wasted search terms, changes made this week, items needing your approval and alerts. If Jarvis expects different
+field names or a different auth header, edit `build_summary` / `post` in `googleads/summary.py`.
