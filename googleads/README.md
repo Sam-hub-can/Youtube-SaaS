@@ -54,3 +54,22 @@ Set `JARVIS_WEBHOOK_URL` in `.env.googleads` (and `JARVIS_WEBHOOK_SECRET` if Jar
 `python -m googleads.summary` sends JSON with `app: "chattervane"`, `panel: "app-data"`, totals, top campaigns,
 wasted search terms, changes made this week, items needing your approval and alerts. If Jarvis expects different
 field names or a different auth header, edit `build_summary` / `post` in `googleads/summary.py`.
+
+## Weekly review on your machine
+
+`googleads/run_weekly.sh` runs the review with the Claude Code CLI (`claude -p`), writes the report to
+`.claude/google-ads/reports/<date>.md` and sends the summary to Jarvis. It runs on your computer, so it can read
+`.env.googleads`. Schedule it with cron:
+
+```bash
+crontab -e
+```
+
+then add (use your real path):
+
+```
+15 9 * * 1  /full/path/to/Youtube-SaaS/googleads/run_weekly.sh
+```
+
+The computer must be on at that time. The script allows only the report, summary and the three safe action commands,
+so it cannot change budgets. Budget proposals appear in the report; you run `set-budget` yourself.
