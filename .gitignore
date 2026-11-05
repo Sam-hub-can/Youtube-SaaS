@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+
+# Google Ads secrets
+.env.googleads
+google-ads.yaml

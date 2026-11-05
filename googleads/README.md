@@ -1,0 +1,47 @@
+# Google Ads API setup
+
+The API is free. You pay only for ad spend.
+
+## One-time setup (about 20 minutes, on your own computer)
+
+1. **Manager account.** Sign in at ads.google.com and create a free manager (MCC) account
+   (ads.google.com/home/tools/manager-accounts), then link your ad account to it.
+2. **Developer token.** In the manager account: Admin > API Center. Fill in the short form.
+   You get a token immediately with *Test* access (test accounts only). Apply for
+   *Basic* access (or *Explorer*, if offered) so it works on your real account. Approval can take a few days.
+3. **OAuth client.** In console.cloud.google.com: create a project, enable **Google Ads API**,
+   configure the OAuth consent screen (External, add yourself as a test user), then
+   Credentials > Create credentials > **OAuth client ID** > *Desktop app*. Copy the client ID and secret.
+4. **Fill in settings.** `cp .env.googleads.example .env.googleads` and enter the developer token,
+   client ID, client secret, your ad account ID (`GOOGLE_ADS_CUSTOMER_ID`) and the manager account ID
+   (`GOOGLE_ADS_LOGIN_CUSTOMER_ID`).
+5. **Refresh token.**
+   ```bash
+   pip install -r googleads/requirements.txt
+   python -m googleads.oauth_setup
+   ```
+   Approve access in the browser, then paste the printed `GOOGLE_ADS_REFRESH_TOKEN=...` line into `.env.googleads`.
+6. **Test it.**
+   ```bash
+   python -m googleads.report --days 30
+   ```
+
+`.env.googleads` is git-ignored. Never commit it or paste it into chat.
+
+## Commands
+
+| Command | What it does | Who runs it |
+|---|---|---|
+| `python -m googleads.report [--days N] [--json]` | Read-only report: campaigns, wasted search terms, zero-conversion keywords, disapproved ads, recommendations | agent |
+| `python -m googleads.actions negative-keyword --campaign-id ID --text "free" --match PHRASE` | Add a negative keyword | agent |
+| `python -m googleads.actions pause --kind keyword\|ad\|ad-group --resource-name RN --reason "..."` | Pause waste | agent |
+| `python -m googleads.actions apply-recommendation --resource-name RN` | Apply a recommendation. Only no-spend types run without approval | agent / you |
+| `python -m googleads.actions set-budget --budget-id ID --amount 25` | Change a daily budget | **you only** |
+
+Every command accepts `--dry-run`. Changes are logged to `.claude/google-ads/changes.jsonl`.
+
+## Budget approval
+
+`set-budget` (and any recommendation that could change spend, bids or targeting) stops and asks you to type
+`APPROVE` in a real terminal. It reads from `/dev/tty`, so the agent cannot answer for you. The agent will
+tell you the exact command to run. There is no command for bids or bid strategies, so the agent cannot change them.
