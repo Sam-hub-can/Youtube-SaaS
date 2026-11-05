@@ -73,3 +73,17 @@ then add (use your real path):
 
 The computer must be on at that time. The script allows only the report, summary and the three safe action commands,
 so it cannot change budgets. Budget proposals appear in the report; you run `set-budget` yourself.
+
+## Jarvis campaign feed (panel data file)
+
+`python -m googleads.feed` writes `/home/sam/Projects/Jarvis/chattervane-ads-feed.json` (change with `JARVIS_FEED_PATH`):
+status, spend (CA$), impressions, clicks, installs, ad strength and review status for the `google-app` entry.
+Unknown fields are left out, other entries in the file are kept, and the file is replaced atomically.
+Figures are lifetime totals since the campaign started. Installs come from conversions in the Download category.
+Set `JARVIS_FEED_CAMPAIGN_IDS` to limit it to specific campaigns (default: all App campaigns).
+
+The panel warns when `as_of` is over 36 hours old, so a weekly run is not enough. Refresh it daily on your machine (no AI needed):
+
+```
+5 8 * * *  cd /full/path/to/Youtube-SaaS && python -m googleads.feed
+```

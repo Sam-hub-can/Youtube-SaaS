@@ -63,3 +63,7 @@ End every run with a short report:
 ## Jarvis
 
 After each weekly review, send the summary with `python -m googleads.summary` (use `--dry-run` first). If `JARVIS_WEBHOOK_URL` is not set or the send fails, say so in the report and continue; do not retry in a loop.
+
+## Jarvis feed
+
+Every time you check the campaign (any report or review), also run `python -m googleads.feed` so the Jarvis panel stays fresh (it warns when the data is over 36 hours old). It writes `chattervane-ads-feed.json` (path from `JARVIS_FEED_PATH`). Never edit that file by hand and never fill in numbers yourself. If the command fails (for example the folder does not exist on this machine), say so in the report.

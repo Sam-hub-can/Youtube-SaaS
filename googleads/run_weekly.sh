@@ -19,9 +19,9 @@ claude -p "Run the weekly Google Ads review using the google-ads-operator agent 
 2. Run python -m googleads.report --days 7 and --days 30. If settings or auth are missing, stop and say exactly what is missing.
 3. Apply only the low-risk changes the agent file allows (use --dry-run first). Never change budgets, bids, bid strategy or targeting; list proposals with the exact set-budget command for me to run myself.
 4. Update .claude/google-ads/notes.md.
-5. Run python -m googleads.summary to send the summary to Jarvis; if it fails, say so and do not retry in a loop.
+5. Run python -m googleads.feed to refresh the Jarvis panel feed, then python -m googleads.summary to send the summary to Jarvis; if it fails, say so and do not retry in a loop.
 6. Finish with: Snapshot, Changed, Needs your approval, Watching, and whether the Jarvis send worked." \
-  --allowedTools "Read" "Edit" "Write" "Bash(python -m googleads.report:*)" "Bash(python -m googleads.summary:*)" \
+  --allowedTools "Read" "Edit" "Write" "Bash(python -m googleads.report:*)" "Bash(python -m googleads.summary:*)" "Bash(python -m googleads.feed:*)" \
     "Bash(python -m googleads.actions negative-keyword:*)" "Bash(python -m googleads.actions pause:*)" \
     "Bash(python -m googleads.actions apply-recommendation:*)" \
   | tee "$OUT"
