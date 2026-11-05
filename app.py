@@ -1,4 +1,5 @@
-from flask import Flask, redirect, url_for, session, render_template
+from flask import Flask, redirect, url_for, session, render_template, jsonify
+from announcer import active_notice
 from auth import init_oauth, oauth
 from db import init_db, get_pending, approve
 
@@ -9,6 +10,17 @@ app.config.from_object("config.Config")
 
 init_oauth(app)
 init_db()
+
+
+# ---------------- MAINTENANCE NOTICE ----------------
+@app.context_processor
+def inject_notice():
+    return {"notice": active_notice()}
+
+
+@app.route("/announcement")
+def announcement():
+    return jsonify(message=active_notice())
 
 
 # ---------------- LOGIN ----------------
